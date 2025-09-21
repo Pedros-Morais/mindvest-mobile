@@ -1,26 +1,54 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * MindVest - Cores do tema inspirado no Duolingo
+ * Esquema de cores amarelo e branco para aprendizado de investimentos
  */
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const primaryYellow = '#FFD700';
+const secondaryYellow = '#FFC107';
+const accentYellow = '#FFEB3B';
+const darkYellow = '#F57F17';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    text: '#2C2C2C',
+    background: '#FFFFFF',
+    surface: '#FAFAFA',
+    primary: primaryYellow,
+    secondary: secondaryYellow,
+    accent: accentYellow,
+    tint: primaryYellow,
+    icon: '#666666',
+    tabIconDefault: '#999999',
+    tabIconSelected: primaryYellow,
+    success: '#4CAF50',
+    warning: '#FF9800',
+    error: '#F44336',
+    streak: '#FF6B35',
+    progress: primaryYellow,
+    lesson: '#E8F5E8',
+    lessonComplete: '#4CAF50',
+    border: '#E0E0E0',
+    shadow: 'rgba(0, 0, 0, 0.1)',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: '#FFFFFF',
+    background: '#1A1A1A',
+    surface: '#2C2C2C',
+    primary: primaryYellow,
+    secondary: secondaryYellow,
+    accent: accentYellow,
+    tint: primaryYellow,
+    icon: '#CCCCCC',
+    tabIconDefault: '#888888',
+    tabIconSelected: primaryYellow,
+    success: '#66BB6A',
+    warning: '#FFA726',
+    error: '#EF5350',
+    streak: '#FF8A65',
+    progress: primaryYellow,
+    lesson: '#2E3B2E',
+    lessonComplete: '#66BB6A',
+    border: '#404040',
+    shadow: 'rgba(0, 0, 0, 0.3)',
   },
 };

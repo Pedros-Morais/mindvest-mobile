@@ -1,110 +1,374 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAppStore } from '@/store/useStore';
+import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { globalStyles, spacing, fonts, borderRadius, shadows } from '@/styles/global';
+import { LessonUnit, Lesson } from '@/modules/lessons/types';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+const { width } = Dimensions.get('window');
 
-export default function TabTwoScreen() {
+export default function LessonsScreen() {
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+  
+  const {
+    lessonUnits,
+    setLessonUnits,
+    lessonProgress,
+    user
+  } = useAppStore();
+
+  // Mock lesson data
+  useEffect(() => {
+    if (lessonUnits.length === 0) {
+      const mockUnits: LessonUnit[] = [
+        {
+          id: 'fundamentos',
+          title: 'Fundamentos dos Investimentos',
+          description: 'Aprenda os conceitos básicos para começar a investir',
+          icon: '📚',
+          color: '#FFD700',
+          isUnlocked: true,
+          progress: 60,
+          lessons: [
+            {
+              id: 'fund_001',
+              title: 'O que são Investimentos?',
+              description: 'Entenda o conceito básico de investimento',
+              category: 'fundamentos' as any,
+              difficulty: 'iniciante' as any,
+              estimatedTime: 10,
+              xpReward: 50,
+              isCompleted: true,
+              isLocked: false,
+              order: 1,
+              questions: [],
+              concepts: []
+            },
+            {
+              id: 'fund_002',
+              title: 'Risco vs Retorno',
+              description: 'Compreenda a relação entre risco e retorno',
+              category: 'fundamentos' as any,
+              difficulty: 'iniciante' as any,
+              estimatedTime: 15,
+              xpReward: 75,
+              isCompleted: false,
+              isLocked: false,
+              order: 2,
+              questions: [],
+              concepts: []
+            },
+            {
+              id: 'fund_003',
+              title: 'Diversificação',
+              description: 'Aprenda a importância da diversificação',
+              category: 'fundamentos' as any,
+              difficulty: 'iniciante' as any,
+              estimatedTime: 12,
+              xpReward: 60,
+              isCompleted: false,
+              isLocked: true,
+              order: 3,
+              questions: [],
+              concepts: []
+            }
+          ]
+        },
+        {
+          id: 'acoes',
+          title: 'Ações',
+          description: 'Aprenda sobre o mercado de ações',
+          icon: '📈',
+          color: '#4CAF50',
+          isUnlocked: false,
+          progress: 0,
+          lessons: []
+        },
+        {
+          id: 'renda_fixa',
+          title: 'Renda Fixa',
+          description: 'Entenda os investimentos de renda fixa',
+          icon: '🏦',
+          color: '#2196F3',
+          isUnlocked: false,
+          progress: 0,
+          lessons: []
+        }
+      ];
+      setLessonUnits(mockUnits);
+    }
+  }, [lessonUnits, setLessonUnits]);
+
+  const renderLessonNode = (lesson: Lesson, index: number, isLastInUnit: boolean) => {
+    const isCompleted = lesson.isCompleted;
+    const isLocked = lesson.isLocked;
+    const isActive = !isCompleted && !isLocked;
+
+    return (
+      <View key={lesson.id} style={styles.lessonNodeContainer}>
+        <TouchableOpacity
+          style={[
+            styles.lessonNode,
+            {
+              backgroundColor: isCompleted 
+                ? colors.success 
+                : isActive 
+                  ? colors.primary 
+                  : colors.border,
+              borderColor: isActive ? colors.primary : colors.border,
+            }
+          ]}
+          disabled={isLocked}
+          activeOpacity={0.8}
+        >
+          <Text style={[
+            styles.lessonNodeText,
+            { 
+              color: isCompleted || isActive ? colors.background : colors.icon 
+            }
+          ]}>
+            {isCompleted ? '✓' : isLocked ? '🔒' : index + 1}
+          </Text>
+        </TouchableOpacity>
+        
+        <View style={[
+          styles.lessonInfo,
+          { backgroundColor: colors.surface, borderColor: colors.border }
+        ]}>
+          <Text style={[styles.lessonTitle, { color: colors.text }]}>
+            {lesson.title}
+          </Text>
+          <Text style={[styles.lessonDescription, { color: colors.icon }]}>
+            {lesson.description}
+          </Text>
+          <View style={styles.lessonMeta}>
+            <Text style={[styles.lessonTime, { color: colors.icon }]}>
+              ⏱️ {lesson.estimatedTime} min
+            </Text>
+            <Text style={[styles.lessonXP, { color: colors.primary }]}>
+              +{lesson.xpReward} XP
+            </Text>
+          </View>
+        </View>
+
+        {!isLastInUnit && (
+          <View style={[
+            styles.pathConnector,
+            { backgroundColor: isCompleted ? colors.success : colors.border }
+          ]} />
+        )}
+      </View>
+    );
+  };
+
+  const renderUnit = (unit: LessonUnit) => {
+    return (
+      <View key={unit.id} style={styles.unitContainer}>
+        <View style={[
+          styles.unitHeader,
+          { backgroundColor: colors.surface, borderColor: colors.border }
+        ]}>
+          <View style={styles.unitTitleContainer}>
+            <Text style={styles.unitIcon}>{unit.icon}</Text>
+            <View style={styles.unitTextContainer}>
+              <Text style={[styles.unitTitle, { color: colors.text }]}>
+                {unit.title}
+              </Text>
+              <Text style={[styles.unitDescription, { color: colors.icon }]}>
+                {unit.description}
+              </Text>
+            </View>
+          </View>
+          
+          {unit.isUnlocked && (
+            <View style={styles.unitProgress}>
+              <Text style={[styles.unitProgressText, { color: colors.icon }]}>
+                {Math.round(unit.progress)}%
+              </Text>
+              <View style={[styles.unitProgressBar, { backgroundColor: colors.border }]}>
+                <View 
+                  style={[
+                    styles.unitProgressFill,
+                    { 
+                      backgroundColor: colors.primary,
+                      width: `${unit.progress}%`
+                    }
+                  ]} 
+                />
+              </View>
+            </View>
+          )}
+        </View>
+
+        {unit.isUnlocked && unit.lessons.map((lesson, index) => 
+          renderLessonNode(lesson, index, index === unit.lessons.length - 1)
+        )}
+
+        {!unit.isUnlocked && (
+          <View style={[styles.lockedUnit, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.lockedText, { color: colors.icon }]}>
+              🔒 Complete a unidade anterior para desbloquear
+            </Text>
+          </View>
+        )}
+      </View>
+    );
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <SafeAreaView style={[globalStyles.safeContainer, { backgroundColor: colors.background }]}>
+      <View style={styles.header}>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>
+          Lições
+        </Text>
+        <Text style={[styles.headerSubtitle, { color: colors.icon }]}>
+          Sua jornada de aprendizado
+        </Text>
+      </View>
+
+      <ScrollView 
+        style={styles.container} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {lessonUnits.map(renderUnit)}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
   },
-  titleContainer: {
+  scrollContent: {
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.xl,
+  },
+  header: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.light.border,
+  },
+  headerTitle: {
+    fontSize: fonts.size.title,
+    fontWeight: 'bold',
+    marginBottom: spacing.xs,
+  },
+  headerSubtitle: {
+    fontSize: fonts.size.md,
+  },
+  unitContainer: {
+    marginBottom: spacing.xl,
+  },
+  unitHeader: {
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    marginBottom: spacing.md,
+    ...shadows.sm,
+  },
+  unitTitleContainer: {
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  unitIcon: {
+    fontSize: fonts.size.xxl,
+    marginRight: spacing.md,
+  },
+  unitTextContainer: {
+    flex: 1,
+  },
+  unitTitle: {
+    fontSize: fonts.size.lg,
+    fontWeight: 'bold',
+    marginBottom: spacing.xs,
+  },
+  unitDescription: {
+    fontSize: fonts.size.sm,
+  },
+  unitProgress: {
+    alignItems: 'flex-end',
+  },
+  unitProgressText: {
+    fontSize: fonts.size.sm,
+    marginBottom: spacing.xs,
+  },
+  unitProgressBar: {
+    width: 80,
+    height: 6,
+    borderRadius: borderRadius.sm,
+    overflow: 'hidden',
+  },
+  unitProgressFill: {
+    height: '100%',
+    borderRadius: borderRadius.sm,
+  },
+  lessonNodeContainer: {
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
+  lessonNode: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+    ...shadows.md,
+  },
+  lessonNodeText: {
+    fontSize: fonts.size.lg,
+    fontWeight: 'bold',
+  },
+  lessonInfo: {
+    width: width - spacing.md * 2,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    ...shadows.sm,
+  },
+  lessonTitle: {
+    fontSize: fonts.size.md,
+    fontWeight: 'bold',
+    marginBottom: spacing.xs,
+  },
+  lessonDescription: {
+    fontSize: fonts.size.sm,
+    marginBottom: spacing.sm,
+  },
+  lessonMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  lessonTime: {
+    fontSize: fonts.size.xs,
+  },
+  lessonXP: {
+    fontSize: fonts.size.xs,
+    fontWeight: 'bold',
+  },
+  pathConnector: {
+    width: 4,
+    height: spacing.lg,
+    marginVertical: spacing.sm,
+  },
+  lockedUnit: {
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    alignItems: 'center',
+    ...shadows.sm,
+  },
+  lockedText: {
+    fontSize: fonts.size.sm,
+    textAlign: 'center',
   },
 });

@@ -1,0 +1,97 @@
+{
+  "achievements": [
+    {
+      "id": "first_lesson",
+      "title": "Primeiro Passo",
+      "description": "Complete sua primeira lição",
+      "icon": "🎯",
+      "category": "aprendizado",
+      "rarity": "comum",
+      "xpReward": 25,
+      "condition": {
+        "type": "lessons_completed",
+        "target": 1,
+        "current": 0
+      },
+      "isUnlocked": false
+    },
+    {
+      "id": "streak_7",
+      "title": "Dedicado",
+      "description": "Estude por 7 dias consecutivos",
+      "icon": "🔥",
+      "category": "consistencia",
+      "rarity": "raro",
+      "xpReward": 100,
+      "condition": {
+        "type": "streak_days",
+        "target": 7,
+        "current": 0
+      },
+      "isUnlocked": false
+    },
+    {
+      "id": "perfect_score",
+      "title": "Perfeição",
+      "description": "Obtenha 100% de acerto em uma lição",
+      "icon": "⭐",
+      "category": "perfeicao",
+      "rarity": "raro",
+      "xpReward": 75,
+      "condition": {
+        "type": "perfect_scores",
+        "target": 1,
+        "current": 0
+      },
+      "isUnlocked": false
+    },
+    {
+      "id": "explorer",
+      "title": "Explorador",
+      "description": "Complete lições em 3 categorias diferentes",
+      "icon": "🗺️",
+      "category": "exploracao",
+      "rarity": "epico",
+      "xpReward": 150,
+      "condition": {
+        "type": "category_mastery",
+        "target": 3,
+        "current": 0
+      },
+      "isUnlocked": false
+    },
+    {
+      "id": "master_investor",
+      "title": "Investidor Master",
+      "description": "Alcance o nível 10",
+      "icon": "👑",
+      "category": "aprendizado",
+      "rarity": "lendario",
+      "xpReward": 500,
+      "condition": {
+        "type": "level_reached",
+        "target": 10,
+        "current": 0
+      },
+      "isUnlocked": false
+    },
+    {
+      "id": "speed_learner",
+      "title": "Aprendiz Veloz",
+      "description": "Complete 5 lições em um dia",
+      "icon": "⚡",
+      "category": "tempo",
+      "rarity": "epico",
+      "xpReward": 200,
+      "condition": {
+        "type": "lessons_completed",
+        "target": 5,
+        "current": 0,
+        "metadata": {
+          "timeframe": "daily"
+        }
+      },
+      "isUnlocked": false
+    }
+  ]
+}

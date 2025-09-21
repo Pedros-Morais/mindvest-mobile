@@ -56,7 +56,7 @@ export default function HomeScreen() {
         {/* Header */}
         <AnimatedCard delay={100} style={styles.headerCard}>
           <View style={styles.header}>
-            <View style={styles.headerText}>
+            <View>
               <Text style={[styles.greeting, { color: colors.text }]}>
                 Olá, {userData.name}!
               </Text>
@@ -64,9 +64,7 @@ export default function HomeScreen() {
                 Pronto para aprender sobre investimentos?
               </Text>
             </View>
-            <View style={styles.streakSection}>
-              <StreakCounter streak={userData.streak} isActive={userData.streak > 0} />
-            </View>
+            <StreakCounter streak={userData.streak} isActive={userData.streak > 0} />
           </View>
         </AnimatedCard>
 
@@ -192,14 +190,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  headerText: {
-    flex: 1,
-  },
-  streakSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 16,
   },
   greeting: {
     fontSize: 28,
