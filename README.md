@@ -1,5 +1,8 @@
 # 📱 MindVest - Plataforma de Educação Financeira
 
+<img width="120" height="262" alt="simulator_screenshot_A216C88C-31D6-4395-A3F0-75C84E8E2C92" src="https://github.com/user-attachments/assets/5f1d4884-87e9-46f4-9854-e7dcaea8952e" />
+
+
 Uma aplicação móvel gamificada para aprendizado de investimentos, inspirada no Duolingo, desenvolvida em React Native com Expo.
 
 ## 👥 Estudantes
