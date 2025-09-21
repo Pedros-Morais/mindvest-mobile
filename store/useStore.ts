@@ -30,6 +30,7 @@ interface AppState {
   // Actions
   setUser: (user: User) => void;
   clearUser: () => void;
+  logout: () => void;
   setUserProgress: (progress: UserProgress) => void;
   setDailyGoal: (goal: DailyGoal) => void;
   setCurrentLesson: (lesson: Lesson | null) => void;
@@ -74,6 +75,19 @@ export const useAppStore = create<AppState>((set, get) => ({
     userAchievements: [],
     progressData: null,
     studySessions: []
+  }),
+  
+  logout: () => set({ 
+    user: null, 
+    userProgress: null, 
+    dailyGoal: null,
+    currentLesson: null,
+    lessonUnits: [],
+    lessonProgress: {},
+    userAchievements: [],
+    progressData: null,
+    studySessions: [],
+    currentScreen: 'home'
   }),
   
   setUserProgress: (progress) => set({ userProgress: progress }),

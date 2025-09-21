@@ -1,6 +1,7 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useAppStore } from '@/store/useStore';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -11,6 +12,7 @@ const { width } = Dimensions.get('window');
 export default function ProgressScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const router = useRouter();
   
   const {
     user,
@@ -19,8 +21,30 @@ export default function ProgressScreen() {
     getCompletedLessonsCount,
     getUnlockedAchievementsCount,
     userAchievements,
-    achievements
+    achievements,
+    logout
   } = useAppStore();
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Sair da Conta',
+      'Tem certeza que deseja sair da sua conta?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Sair',
+          style: 'destructive',
+          onPress: () => {
+            logout();
+            router.replace('/auth/welcome');
+          },
+        },
+      ]
+    );
+  };
 
   const weeklyData = [
     { day: 'Dom', xp: 0, completed: false },
@@ -215,6 +239,20 @@ export default function ProgressScreen() {
             </View>
           </View>
         </View>
+
+        {/* Logout Button */}
+        <TouchableOpacity 
+          style={[styles.logoutButton, { borderColor: colors.error }]}
+          onPress={handleLogout}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.logoutIcon, { color: colors.error }]}>
+            🚪
+          </Text>
+          <Text style={[styles.logoutText, { color: colors.error }]}>
+            Sair da Conta
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -402,5 +440,24 @@ const styles = StyleSheet.create({
   },
   studyTimeLabel: {
     fontSize: fonts.size.sm,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 2,
+    marginTop: spacing.lg,
+    marginBottom: spacing.md,
+    backgroundColor: 'transparent',
+  },
+  logoutIcon: {
+    fontSize: fonts.size.lg,
+    marginRight: spacing.sm,
+  },
+  logoutText: {
+    fontSize: fonts.size.md,
+    fontWeight: '600',
   },
 });

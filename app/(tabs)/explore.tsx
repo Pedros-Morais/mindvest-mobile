@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { ScrollView, StyleSheet, View, Text, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppStore } from '@/store/useStore';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { globalStyles, spacing, fonts, borderRadius, shadows } from '@/styles/global';
 import { LessonUnit, Lesson } from '@/modules/lessons/types';
+import { AnimatedUnitCard, AnimatedLessonNode } from '@/components/ui/LessonComponents';
+import { AnimatedCard } from '@/components/ui/AnimatedCard';
 
 const { width } = Dimensions.get('window');
 
@@ -102,120 +104,24 @@ export default function LessonsScreen() {
     }
   }, [lessonUnits, setLessonUnits]);
 
-  const renderLessonNode = (lesson: Lesson, index: number, isLastInUnit: boolean) => {
-    const isCompleted = lesson.isCompleted;
-    const isLocked = lesson.isLocked;
-    const isActive = !isCompleted && !isLocked;
-
+  const renderUnit = (unit: LessonUnit, index: number) => {
     return (
-      <View key={lesson.id} style={styles.lessonNodeContainer}>
-        <TouchableOpacity
-          style={[
-            styles.lessonNode,
-            {
-              backgroundColor: isCompleted 
-                ? colors.success 
-                : isActive 
-                  ? colors.primary 
-                  : colors.border,
-              borderColor: isActive ? colors.primary : colors.border,
-            }
-          ]}
-          disabled={isLocked}
-          activeOpacity={0.8}
-        >
-          <Text style={[
-            styles.lessonNodeText,
-            { 
-              color: isCompleted || isActive ? colors.background : colors.icon 
-            }
-          ]}>
-            {isCompleted ? '✓' : isLocked ? '🔒' : index + 1}
-          </Text>
-        </TouchableOpacity>
-        
-        <View style={[
-          styles.lessonInfo,
-          { backgroundColor: colors.surface, borderColor: colors.border }
-        ]}>
-          <Text style={[styles.lessonTitle, { color: colors.text }]}>
-            {lesson.title}
-          </Text>
-          <Text style={[styles.lessonDescription, { color: colors.icon }]}>
-            {lesson.description}
-          </Text>
-          <View style={styles.lessonMeta}>
-            <Text style={[styles.lessonTime, { color: colors.icon }]}>
-              ⏱️ {lesson.estimatedTime} min
-            </Text>
-            <Text style={[styles.lessonXP, { color: colors.primary }]}>
-              +{lesson.xpReward} XP
-            </Text>
-          </View>
-        </View>
-
-        {!isLastInUnit && (
-          <View style={[
-            styles.pathConnector,
-            { backgroundColor: isCompleted ? colors.success : colors.border }
-          ]} />
-        )}
-      </View>
+      <AnimatedUnitCard key={unit.id} unit={unit} delay={index * 200} />
     );
   };
 
-  const renderUnit = (unit: LessonUnit) => {
-    return (
-      <View key={unit.id} style={styles.unitContainer}>
-        <View style={[
-          styles.unitHeader,
-          { backgroundColor: colors.surface, borderColor: colors.border }
-        ]}>
-          <View style={styles.unitTitleContainer}>
-            <Text style={styles.unitIcon}>{unit.icon}</Text>
-            <View style={styles.unitTextContainer}>
-              <Text style={[styles.unitTitle, { color: colors.text }]}>
-                {unit.title}
-              </Text>
-              <Text style={[styles.unitDescription, { color: colors.icon }]}>
-                {unit.description}
-              </Text>
-            </View>
-          </View>
-          
-          {unit.isUnlocked && (
-            <View style={styles.unitProgress}>
-              <Text style={[styles.unitProgressText, { color: colors.icon }]}>
-                {Math.round(unit.progress)}%
-              </Text>
-              <View style={[styles.unitProgressBar, { backgroundColor: colors.border }]}>
-                <View 
-                  style={[
-                    styles.unitProgressFill,
-                    { 
-                      backgroundColor: colors.primary,
-                      width: `${unit.progress}%`
-                    }
-                  ]} 
-                />
-              </View>
-            </View>
-          )}
-        </View>
-
-        {unit.isUnlocked && unit.lessons.map((lesson, index) => 
-          renderLessonNode(lesson, index, index === unit.lessons.length - 1)
-        )}
-
-        {!unit.isUnlocked && (
-          <View style={[styles.lockedUnit, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            <Text style={[styles.lockedText, { color: colors.icon }]}>
-              🔒 Complete a unidade anterior para desbloquear
-            </Text>
-          </View>
-        )}
-      </View>
-    );
+  const renderLessons = (unit: LessonUnit) => {
+    if (!unit.isUnlocked) return null;
+    
+    return unit.lessons.map((lesson, index) => (
+      <AnimatedLessonNode
+        key={lesson.id}
+        lesson={lesson}
+        index={index}
+        isLastInUnit={index === unit.lessons.length - 1}
+        delay={index * 150}
+      />
+    ));
   };
 
   return (
@@ -234,7 +140,12 @@ export default function LessonsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {lessonUnits.map(renderUnit)}
+        {lessonUnits.map((unit, index) => (
+          <View key={unit.id}>
+            {renderUnit(unit, index)}
+            {renderLessons(unit)}
+          </View>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -261,114 +172,5 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     fontSize: fonts.size.md,
-  },
-  unitContainer: {
-    marginBottom: spacing.xl,
-  },
-  unitHeader: {
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-    marginBottom: spacing.md,
-    ...shadows.sm,
-  },
-  unitTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  unitIcon: {
-    fontSize: fonts.size.xxl,
-    marginRight: spacing.md,
-  },
-  unitTextContainer: {
-    flex: 1,
-  },
-  unitTitle: {
-    fontSize: fonts.size.lg,
-    fontWeight: 'bold',
-    marginBottom: spacing.xs,
-  },
-  unitDescription: {
-    fontSize: fonts.size.sm,
-  },
-  unitProgress: {
-    alignItems: 'flex-end',
-  },
-  unitProgressText: {
-    fontSize: fonts.size.sm,
-    marginBottom: spacing.xs,
-  },
-  unitProgressBar: {
-    width: 80,
-    height: 6,
-    borderRadius: borderRadius.sm,
-    overflow: 'hidden',
-  },
-  unitProgressFill: {
-    height: '100%',
-    borderRadius: borderRadius.sm,
-  },
-  lessonNodeContainer: {
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  lessonNode: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    borderWidth: 3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.sm,
-    ...shadows.md,
-  },
-  lessonNodeText: {
-    fontSize: fonts.size.lg,
-    fontWeight: 'bold',
-  },
-  lessonInfo: {
-    width: width - spacing.md * 2,
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-    ...shadows.sm,
-  },
-  lessonTitle: {
-    fontSize: fonts.size.md,
-    fontWeight: 'bold',
-    marginBottom: spacing.xs,
-  },
-  lessonDescription: {
-    fontSize: fonts.size.sm,
-    marginBottom: spacing.sm,
-  },
-  lessonMeta: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  lessonTime: {
-    fontSize: fonts.size.xs,
-  },
-  lessonXP: {
-    fontSize: fonts.size.xs,
-    fontWeight: 'bold',
-  },
-  pathConnector: {
-    width: 4,
-    height: spacing.lg,
-    marginVertical: spacing.sm,
-  },
-  lockedUnit: {
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-    alignItems: 'center',
-    ...shadows.sm,
-  },
-  lockedText: {
-    fontSize: fonts.size.sm,
-    textAlign: 'center',
   },
 });
