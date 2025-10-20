@@ -37,6 +37,12 @@ export default function TabLayout() {
           title: 'Progresso',
         }}
       />
+      <Tabs.Screen
+        name="topics"
+        options={{
+          title: 'Tópicos',
+        }}
+      />
     </Tabs>
   );
 }

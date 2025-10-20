@@ -1,0 +1,7 @@
+Repositorio GitHub/Classroom (CP3):
+
+URL: https://github.com/SEU_ORGANIZACAO/mindvest-mobile
+
+Observacoes:
+- Este arquivo atende ao entregavel solicitado (.txt com link do repositorio).
+- Atualize a URL acima com o link real do GitHub/GitHub Classroom antes da submissao.

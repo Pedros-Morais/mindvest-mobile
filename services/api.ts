@@ -1,14 +1,16 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://sua-api.com', 
-  timeout: 10000 
+  baseURL: process.env.EXPO_PUBLIC_API_BASE_URL || 'https://jsonplaceholder.typicode.com',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
-
 
 api.interceptors.request.use(
   (config) => {
-    const token = 'SEU_TOKEN_AQUI'; 
+    const token = process.env.EXPO_PUBLIC_API_TOKEN; // opcional
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -16,6 +18,7 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -23,6 +26,8 @@ api.interceptors.response.use(
       console.error('Erro da API:', error.response.data);
     } else if (error.request) {
       console.error('Erro de rede:', error.message);
+    } else {
+      console.error('Erro desconhecido:', error);
     }
     return Promise.reject(error);
   }

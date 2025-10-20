@@ -57,7 +57,8 @@ mindvest-mobile/
 │   ├── (tabs)/                   # Navegação por abas
 │   │   ├── index.tsx            # Tela inicial
 │   │   ├── explore.tsx          # Lições
-│   │   └── progress.tsx         # Progresso
+│   │   ├── progress.tsx         # Progresso
+│   │   └── topics.tsx           # CRUD de Tópicos (CP3)
 │   ├── auth/                    # Autenticação
 │   │   ├── welcome.tsx          # Boas-vindas
 │   │   ├── login.tsx           # Login
@@ -69,7 +70,10 @@ mindvest-mobile/
 │   ├── auth/                   # Autenticação
 │   ├── lessons/                # Lições
 │   ├── achievements/           # Conquistas
-│   └── progress/               # Progresso
+│   ├── progress/               # Progresso
+│   └── topics/                 # CRUD - serviço e tipos
+│       ├── services/           # TopicsService (API REST)
+│       └── types.ts            # Tipos (Topic, TopicInput)
 ├── store/                      # Gerenciamento de estado
 ├── constants/                  # Constantes (cores, etc.)
 ├── hooks/                      # Hooks customizados
@@ -170,6 +174,42 @@ npm run lint:fix        # Corrige problemas automaticamente
 # Testes
 npm test                # Executa testes
 ```
+
+## 🧩 Funcionalidades (Sprint - 4 CRUD)
+
+- **Tópicos (aba "Tópicos")**
+  - Criar, listar, editar e excluir tópicos via API REST
+  - Validação com `zod` (título ≥ 3, descrição ≥ 10 caracteres)
+  - Feedback visual (sucesso, erro) e botões de ação
+  - Retentativa automática em falhas de rede/5xx e botão "Tentar novamente"
+
+## 🔗 Configuração da API (REST)
+
+- Base padrão: `https://jsonplaceholder.typicode.com` (sem necessidade de credenciais)
+- Opcional: definir `EXPO_PUBLIC_API_BASE_URL` para apontar para sua própria API
+- Opcional: definir `EXPO_PUBLIC_API_TOKEN` para autenticação (Bearer)
+- Cliente HTTP: `services/api.ts` com interceptors de requisição/resposta e logs de erro
+
+## ✅ Validação, Erros e Interrupções
+
+- Validação com `zod` em formulários (título/descrição)
+- Tratamento de erros com mensagens claras e `Alert`
+- Retentativas automáticas (até 2) em falhas de rede/5xx (`TopicsService`)
+- Ação de "Tentar novamente" na UI para recarregar dados
+
+## 🧭 Navegação e Acesso
+
+- Abra o app e acesse a aba `Tópicos`
+- Use o botão flutuante `＋` para criar um novo tópico
+- Toque em um card para editar; use "Excluir" para remover
+
+## 🧪 Como Testar o CRUD
+
+1. Abra `Tópicos` e verifique a lista carregada da API
+2. Crie um tópico (título e descrição válidos) e confirme o feedback
+3. Edite um tópico e valide atualização
+4. Exclua um tópico e verifique remoção
+5. Desconecte a rede para verificar retentativas e mensagens de erro
 
 ## 📈 Roadmap
 

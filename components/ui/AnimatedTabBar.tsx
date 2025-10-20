@@ -29,7 +29,7 @@ export const AnimatedTabBar: React.FC<TabBarProps> = ({ state, descriptors, navi
   const colors = Colors[colorScheme ?? 'light'];
   const insets = useSafeAreaInsets();
   
-  const filteredRoutes = state.routes.filter((route: any) => ['index', 'explore', 'progress'].includes(route.name));
+  const filteredRoutes = state.routes.filter((route: any) => ['index', 'explore', 'progress', 'topics'].includes(route.name));
   const tabWidth = width / filteredRoutes.length;
   const translateX = useSharedValue(0);
 
@@ -82,7 +82,7 @@ export const AnimatedTabBar: React.FC<TabBarProps> = ({ state, descriptors, navi
 
       {/* Tab Buttons */}
       <View style={styles.tabsContainer}>
-        {state.routes.filter((route: any) => ['index', 'explore', 'progress'].includes(route.name)).map((route: any, index: number) => {
+        {state.routes.filter((route: any) => ['index', 'explore', 'progress', 'topics'].includes(route.name)).map((route: any, index: number) => {
           const { options } = descriptors[route.key];
           const isFocused = state.index === index;
 
@@ -149,6 +149,8 @@ const AnimatedTabIcon: React.FC<AnimatedTabIconProps> = ({ route, isFocused, opt
         return '📚';
       case 'progress':
         return '📊';
+      case 'topics':
+        return '📝';
       default:
         return null; // Don't show unknown tabs
     }
